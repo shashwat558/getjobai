@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^0.14.1",
+    "@huggingface/inference": "^2.8.1",
+    "@langchain/community": "^0.3.42",
+    "@langchain/core": "^0.3.55",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/supabase-js": "^2.49.8",
     "class-variance-authority": "^0.7.1",

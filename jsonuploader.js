@@ -1,27 +1,45 @@
 const {createClient} = require("@supabase/supabase-js")
 const fs = require("fs")
+const readline = require("readline");
+console.log(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_SECRET_KEY)
+const supabase = createClient( "https://cthkbabjadxiizomyiyj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0aGtiYWJqYWR4aWl6b215aXlqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzAzODg2NSwiZXhwIjoyMDYyNjE0ODY1fQ.7ZY9gB46-hRuCR1FHLTviwOeNO4VlvMWTL_TNJIvP5k");
 
+const fileStream = fs.createReadStream('public/jobs.jsonl');
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_SECRET_KEY);
+const rl = readline.createInterface({
+  input: fileStream,
+  crlfDelay: Infinity
+});
 
+const BATCH_SIZE = 500;
+let batch = [];
 
+async function insertBatch(data) {
+  if (data.length === 0) return;
 
-const BATCH_SIZE=500;
-
-async function uploadJsonFile (data) {
-    for(let i=0; i < data.length; i += BATCH_SIZE){
-        const batch = data.slice(i, i+ BATCH_SIZE);
-        const {error} = await supabase.from("jobs").insert(batch);
-        if (error) {
-      console.error(`Error inserting batch ${i / BATCH_SIZE + 1}:`, error);
-    } else {
-      console.log(`Successfully inserted batch ${i / BATCH_SIZE + 1}`);
-    }
-    }
-
-
-    
-
+  const { error } = await supabase.from('jobs').insert(data);
+  if (error) {
+    console.error("Insert error:", error);
+  } else {
+    console.log(`Inserted ${data.length} jobs`);
+  }
 }
 
-uploadJsonFile(jobs)
+rl.on('line', async (line) => {
+  if (line.trim() === "") return;
+  try {
+    const job = JSON.parse(line);
+    batch.push(job);
+    if (batch.length >= BATCH_SIZE) {
+      await insertBatch(batch);
+      batch = [];
+    }
+  } catch (err) {
+    console.error("JSON parse error:", err.message, "\nLine:", line);
+  }
+});
+
+rl.on('close', async () => {
+  await insertBatch(batch);
+  console.log("Upload complete.");
+});

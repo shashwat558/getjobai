@@ -36,43 +36,52 @@ const ResumeUpload = () => {
     }
   };
 
-  const handleFile = (file) => {
-    // Check if file is PDF or DOCX
-    const fileType = file.type;
-    if (fileType !== "application/pdf" && 
-        fileType !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-      alert({
-        title: "Invalid file type",
-        description: "Please upload a PDF or DOCX file",
-        variant: "destructive",
-      });
-      return;
-    }
+const handleFile = (file) => {
+  const fileType = file.type;
 
-    setFile(file);
-    analyzeResume(file);
-  };
+  if (
+    fileType !== "application/pdf" &&
+    fileType !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    alert("Please upload a PDF or DOCX file");
+    return;
+  }
 
-  const analyzeResume = (file) => {
+  setFile(file);
+
+  
+  const uploadFile = async () => {
     setIsLoading(true);
-    
-    // Simulate API call to analyze resume
-    setTimeout(() => {
-      const roles = [
-        "Frontend Developer", 
-        "UX Designer", 
-        "Product Manager", 
-        "Data Scientist", 
-        "Backend Engineer"
-      ];
-      const randomRole = roles[Math.floor(Math.random() * roles.length)];
-      
-      setPredictedRole(randomRole);
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    try {
+      const response = await fetch("/api/analyzer", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const result = await response.json();
+
+     
+      setPredictedRole(result.role);
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Failed to analyze resume.");
+    } finally {
       setIsLoading(false);
-      
-      
-    }, 2000);
+    }
   };
+
+  uploadFile();
+};
+
+
+ 
 
   return (
     <section className="w-full py-12">

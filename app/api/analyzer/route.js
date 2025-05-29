@@ -13,7 +13,7 @@ You will be given a text content of a resume and your job is to return the job r
 
 Respond in the following JSON format:
 {
- "jobRoles": ["", ""]
+ "jobRoles": ""
 }
  
 text:
@@ -33,21 +33,21 @@ ${text}
     
     const embeddings = await genAi.models.embedContent({
         model: "text-embedding-004",
-        contents: mainString.jobRoles[0]
+        contents: mainString.jobRoles
     })
-    console.log(embeddings.embeddings)
+    const queryEmbedding = embeddings.embeddings[0].values;
     
     
-    return mainString;
+    return queryEmbedding;
 
 
 }
 
 export async function POST(req){
-    const data = await req.formData();
+    const reqData = await req.formData();
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_SECRET_KEY);
 
-    const file = data.get("resume");
+    const file = reqData.get("resume");
     if(!file){
         return NextResponse.json({message: "Resume is required"})
     }
@@ -58,12 +58,20 @@ export async function POST(req){
     const mainContent = docs[0].pageContent;
     console.log(mainContent);
 
-    const aiResponse = await getJobRoles(mainContent);
+    const queryEmbedding = await getJobRoles(mainContent);
     console.log(aiResponse)
 
-    const {data, error} = await supabase.rpc('sql', {
-        sql
+    const {data, error} = await supabase.rpc('match_jobs', {
+        query_embedding: queryEmbedding,
+        match_threshold: 0.75,
+        match_count: 10
     })
+    if(error){
+        console.log(error)
+    }
+
+    console.log(data);
+
 
 
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu, X, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/theme-toggle";
+import { ModeToggle } from "@/components/theme-toggle";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);

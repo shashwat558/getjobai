@@ -11,11 +11,11 @@ import { useState, useRef } from "react"
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [uploadedFile, setUploadedFile] = useState(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef(null)
 
   const containerVariants = {
     hidden: {
@@ -69,6 +69,18 @@ export default function HeroSection() {
 
   const handleFileUpload = (file) => {
     setUploadedFile(file)
+    const uploadFile = async () => {
+      const formData = new FormData();
+      formData.append("resume", resume);
+      try {
+        const response = await fetch("/api/analyzer", {
+          method: "POST",
+          body: formData
+        })
+      } catch (error) {
+        
+      }
+    }
     setIsUploading(true)
     setUploadProgress(0)
 

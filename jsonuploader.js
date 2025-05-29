@@ -2,7 +2,7 @@ const {createClient} = require("@supabase/supabase-js")
 const fs = require("fs")
 const readline = require("readline");
 console.log(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_SECRET_KEY)
-const supabase = createClient( );
+const supabase = createClient( "https://cthkbabjadxiizomyiyj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0aGtiYWJqYWR4aWl6b215aXlqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzAzODg2NSwiZXhwIjoyMDYyNjE0ODY1fQ.7ZY9gB46-hRuCR1FHLTviwOeNO4VlvMWTL_TNJIvP5k");
 
 const fileStream = fs.createReadStream('public/jobs.jsonl');
 

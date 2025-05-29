@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {PDFLoader} from "@langchain/community/document_loaders/fs/pdf";
 import { GoogleGenAI } from "@google/genai";
+import { createClient } from "@supabase/supabase-js";
 
 const genAi = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
@@ -44,7 +45,8 @@ ${text}
 
 export async function POST(req){
     const data = await req.formData();
-    
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_SECRET_KEY);
+
     const file = data.get("resume");
     if(!file){
         return NextResponse.json({message: "Resume is required"})
@@ -58,6 +60,12 @@ export async function POST(req){
 
     const aiResponse = await getJobRoles(mainContent);
     console.log(aiResponse)
+
+    const {data, error} = await supabase.rpc('sql', {
+        sql
+    })
+
+
 
 
 

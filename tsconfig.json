@@ -24,6 +24,6 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "app/api/jsonuploader/route.js"  ],
   "exclude": ["node_modules"]
 }

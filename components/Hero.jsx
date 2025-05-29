@@ -71,16 +71,20 @@ export default function HeroSection() {
     setUploadedFile(file)
     const uploadFile = async () => {
       const formData = new FormData();
-      formData.append("resume", resume);
+      formData.set("resume", file);
       try {
         const response = await fetch("/api/analyzer", {
           method: "POST",
           body: formData
         })
+        if(response.ok){
+          console.log("kaam kr gya")
+        }
       } catch (error) {
-        
+        console.log(error)
       }
     }
+    uploadFile()
     setIsUploading(true)
     setUploadProgress(0)
 

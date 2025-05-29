@@ -48,12 +48,16 @@ const handleFile = (file) => {
   }
 
   setFile(file);
+  uploadFile(file)
 
   
-  const uploadFile = async () => {
+  
+};
+
+const uploadFile = async (selectedFile) => {
     setIsLoading(true);
     const formData = new FormData();
-    formData.append("resume", file);
+    formData.set("resume", selectedFile);
 
     try {
       const response = await fetch("/api/analyzer", {
@@ -66,8 +70,6 @@ const handleFile = (file) => {
       }
 
       const result = await response.json();
-
-     
       setPredictedRole(result.role);
     } catch (error) {
       console.error("Upload error:", error);
@@ -76,10 +78,6 @@ const handleFile = (file) => {
       setIsLoading(false);
     }
   };
-
-  uploadFile();
-};
-
 
  
 

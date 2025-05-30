@@ -56,7 +56,13 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
           </motion.h1>
 
           {/* Subheading */}
-          <Image />
+          <motion.p
+            className="text-lg sm:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-2xl"
+            variants={itemVariants}
+          >
+            Upload your resume for personalized job matching or search through thousands of opportunities. Our AI
+            analyzes your skills and connects you with your perfect role.
+          </motion.p>
         </div>
 
         {/* Trust indicators */}
@@ -138,11 +144,11 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
               }}
             >
               <Image
-                src="/placeholder.svg?height=400&width=400"
+                src="/hero.png"
                 alt="Person using laptop to find jobs with AI assistance"
                 width={400}
                 height={400}
-                className="w-full h-auto"
+                className="w-full h-auto rounded-xl" 
               />
             </motion.div>
           </motion.div>

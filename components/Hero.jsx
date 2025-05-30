@@ -229,6 +229,7 @@ export default function HeroSection() {
           fileInputRef={fileInputRef}
           itemVariants={itemVariants}
           setPredictedRole={setPredictedRole}
+          predictedRole={predictedRole}
         />
 
         {/* Job Recommendations Section */}

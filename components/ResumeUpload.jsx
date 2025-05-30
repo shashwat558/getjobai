@@ -22,6 +22,7 @@ export default function ResumeUploadSection({
   setPredictedRole,
   fileInputRef,
   itemVariants,
+  predictedRole
 }) {
   const {setJobs} = useJobs()
   const handleFileUpload = (file) => {
@@ -153,62 +154,77 @@ export default function ResumeUploadSection({
               </motion.div>
             </div>
           ) : (
-            <div className="text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 500, damping: 15 }}
-              >
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.3) 100%)",
-                    }}
-                  >
-                    {isUploading ? (
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                      >
-                        <Upload className="w-6 h-6 text-emerald-600" />
-                      </motion.div>
-                    ) : (
-                      <Check className="w-6 h-6 text-emerald-600" />
-                    )}
-                  </div>
-                  <div className="text-left">
-                    <p className="font-semibold text-slate-700">{uploadedFile.name}</p>
-                    <p className="text-sm text-slate-500">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                  </div>
-                  <motion.button
-                    onClick={removeFile}
-                    className="ml-auto p-2 hover:bg-red-100 rounded-full transition-colors"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <X className="w-5 h-5 text-red-500" />
-                  </motion.button>
-                </div>
-
-                {isUploading && (
-                  <div className="w-full bg-slate-200 rounded-full h-2 mb-4">
-                    <motion.div
-                      className="h-2 rounded-full"
-                      style={{
-                        background: "linear-gradient(90deg, rgba(14, 165, 233, 1) 0%, rgba(34, 197, 94, 1) 100%)",
-                      }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${uploadProgress}%` }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </div>
-                )}
-
-                {!isUploading && <p className="text-emerald-600 font-medium">✓ Resume uploaded successfully!</p>}
-              </motion.div>
-            </div>
+  <div className="text-center">
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", stiffness: 500, damping: 15 }}
+    >
+      <div className="flex items-center justify-center gap-3 mb-4">
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center"
+          style={{
+            background: "linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.3) 100%)",
+          }}
+        >
+          {isUploading ? (
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+            >
+              <Upload className="w-6 h-6 text-emerald-600" />
+            </motion.div>
+          ) : (
+            <Check className="w-6 h-6 text-emerald-600" />
           )}
+        </div>
+        <div className="text-left">
+          <p className="font-semibold text-slate-700">{uploadedFile.name}</p>
+          <p className="text-sm text-slate-500">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+        </div>
+        <motion.button
+          onClick={removeFile}
+          className="ml-auto p-2 hover:bg-red-100 rounded-full transition-colors"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <X className="w-5 h-5 text-red-500" />
+        </motion.button>
+      </div>
+
+      {isUploading && (
+        <div className="w-full bg-slate-200 rounded-full h-2 mb-4">
+          <motion.div
+            className="h-2 rounded-full"
+            style={{
+              background: "linear-gradient(90deg, rgba(14, 165, 233, 1) 0%, rgba(34, 197, 94, 1) 100%)",
+            }}
+            initial={{ width: 0 }}
+            animate={{ width: `${uploadProgress}%` }}
+            transition={{ duration: 0.3 }}
+          />
+        </div>
+      )}
+
+      {!isUploading && (
+        <>
+          <p className="text-emerald-600 font-medium">✓ Resume uploaded successfully!</p>
+          {predictedRole && (
+            <motion.p
+              className="mt-4 text-lg font-semibold text-blue-600"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              🔍 Suggested Role: <span className="text-blue-800">{predictedRole}</span>
+            </motion.p>
+          )}
+        </>
+      )}
+    </motion.div>
+  </div>
+)
+}
         </motion.div>
       </div>
     </motion.div>

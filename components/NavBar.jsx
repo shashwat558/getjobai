@@ -33,7 +33,7 @@ const Navbar = () => {
           <Briefcase className="h-6 w-6 text-primary" />
           <span className="font-bold text-xl">JobFinder</span>
         </Link>
-        <ModeToggle />
+       
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">

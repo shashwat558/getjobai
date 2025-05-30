@@ -7,10 +7,10 @@ import Image from "next/image"
 export default function HeroContent({ itemVariants, floatingVariants }) {
   return (
     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center py-12 lg:py-20">
-      {/* Left side - Content */}
+      
       <motion.div className="space-y-8 lg:space-y-10" variants={itemVariants}>
         <div className="space-y-6">
-          {/* Eyebrow */}
+          
           <motion.div
             className="inline-flex items-center px-4 py-2 rounded-full border border-white/30 backdrop-blur-sm"
             style={{
@@ -32,7 +32,7 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
             </motion.span>
           </motion.div>
 
-          {/* Main headline */}
+          
           <motion.h1
             className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1]"
             variants={itemVariants}
@@ -56,13 +56,7 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
           </motion.h1>
 
           {/* Subheading */}
-          <motion.p
-            className="text-lg sm:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-2xl"
-            variants={itemVariants}
-          >
-            Upload your resume for personalized job matching or search through thousands of opportunities. Our AI
-            analyzes your skills and connects you with your perfect role.
-          </motion.p>
+          <Image />
         </div>
 
         {/* Trust indicators */}
@@ -99,11 +93,11 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
         </motion.div>
       </motion.div>
 
-      {/* Right side - Illustration */}
+     
       <motion.div className="relative lg:h-[600px] flex items-center justify-center" variants={itemVariants}>
-        {/* Main illustration container */}
+        
         <div className="relative w-full max-w-lg">
-          {/* Enhanced background glow */}
+          
           <motion.div
             className="absolute inset-0 rounded-3xl blur-2xl transform rotate-6 opacity-30"
             style={{
@@ -121,7 +115,7 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
             }}
           />
 
-          {/* Main illustration placeholder */}
+          
           <motion.div
             className="relative rounded-3xl p-8 shadow-2xl border border-white/50 backdrop-blur-sm"
             style={{
@@ -153,7 +147,7 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
             </motion.div>
           </motion.div>
 
-          {/* Enhanced floating job cards */}
+          
           {[
             { position: "-top-4 -left-4", gradient: "from-blue-500 to-cyan-500", rotation: [-6, -3, -6] },
             { position: "-bottom-4 -right-4", gradient: "from-emerald-500 to-teal-500", rotation: [6, 3, 6] },

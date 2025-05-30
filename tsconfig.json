@@ -24,6 +24,6 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/api/jsonuploader/route.js"  ],
+, "app/api/jsonuploader/route.js", "app/api/getJobs/route.js", "components/job-card.jsx"  ],
   "exclude": ["node_modules"]
 }

@@ -5,6 +5,7 @@
 import { Button } from "@/components/ui/button"
 import { Upload, FileText, X, Check } from "lucide-react"
 import { motion } from "framer-motion"
+import { useJobs } from "@/store/useJobs"
 
 
 
@@ -18,16 +19,18 @@ export default function ResumeUploadSection({
   setUploadProgress,
   isUploading,
   setIsUploading,
+  setPredictedRole,
   fileInputRef,
   itemVariants,
 }) {
+  const {setJobs} = useJobs()
   const handleFileUpload = (file) => {
     setUploadedFile(file)
     uploadFile(file)
     setIsUploading(true)
     setUploadProgress(0)
 
-    // Simulate upload progress
+    
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 100) {
@@ -49,29 +52,38 @@ export default function ResumeUploadSection({
     }
   }
   const uploadFile = async (selectedFile) => {
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.set("resume", selectedFile);
+  setIsUploading(true);
+  const formData = new FormData();
+  formData.set("resume", selectedFile);
+
+  try {
+    const response = await fetch("/api/analyzer", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    const result = await response.json();
 
     try {
-      const response = await fetch("/api/analyzer", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
-
-      const result = await response.json();
       setPredictedRole(result.role);
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Failed to analyze resume.");
-    } finally {
-      setIsLoading(false);
+      setJobs(result.jobs);
+      console.log("Success: ", result);
+    } catch (innerError) {
+      console.error("Error inside result handling:", innerError);
+      alert("Failed to handle response data: " + innerError.message);
     }
-  };
+  } catch (error) {
+    console.error("Upload error:", error);
+    alert("Failed to analyze resume: " + error.message);
+  } finally {
+    setIsUploading(false);
+  }
+};
+
 
   const handleFileSelect = (e) => {
     const files = e.target.files

@@ -1,7 +1,7 @@
-import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/NavBar";
-import { ThemeProvider } from "@/components/theme-provider";
+
 
 
 const font = Poppins({
@@ -20,15 +20,10 @@ export default function RootLayout({ children }) {
       <body
         className={`${font.className} antialiased`}
       >
-         <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
+         
         <Navbar />
         {children}
-        </ThemeProvider>
+        
       </body>
     </html>
   );

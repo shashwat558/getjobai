@@ -14,6 +14,7 @@ export default function HeroSection() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef(null)
+  const [predictedRole, setPredictedRole] = useState("");
 
   const containerVariants = {
     hidden: {
@@ -227,6 +228,7 @@ export default function HeroSection() {
           setIsUploading={setIsUploading}
           fileInputRef={fileInputRef}
           itemVariants={itemVariants}
+          setPredictedRole={setPredictedRole}
         />
 
         {/* Job Recommendations Section */}

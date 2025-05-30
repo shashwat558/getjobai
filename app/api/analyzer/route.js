@@ -38,7 +38,7 @@ ${text}
     const queryEmbedding = embeddings.embeddings[0].values;
     
     
-    return queryEmbedding;
+    return {embedding:queryEmbedding, role:mainString.jobRoles};
 
 
 }
@@ -58,11 +58,11 @@ export async function POST(req){
     const mainContent = docs[0].pageContent;
     console.log(mainContent);
 
-    const queryEmbedding = await getJobRoles(mainContent);
-    console.log(queryEmbedding)
+    const {embedding, role} = await getJobRoles(mainContent);
+    console.log(embedding, role)
 
     const {data, error} = await supabase.rpc('match_jobs', {
-        query_embedding: queryEmbedding,
+        query_embedding: embedding,
         match_threshold: 0.75,
         match_count: 10
     })
@@ -70,7 +70,11 @@ export async function POST(req){
         console.log(error)
     }
 
-    console.log(data);
+    return NextResponse.json({jobs: data, roles:role })
+
+
+
+   
 
 
 

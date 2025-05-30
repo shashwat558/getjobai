@@ -1,61 +1,55 @@
-"use client";
-
-import { useState } from "react";
-import { Upload, FileText, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-
-const ResumeUpload = () => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [file, setFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [predictedRole, setPredictedRole] = useState(null);
 
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+"use client"
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
+import { Button } from "@/components/ui/button"
+import { Upload, FileText, X, Check } from "lucide-react"
+import { motion } from "framer-motion"
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFile(e.dataTransfer.files[0]);
-    }
-  };
 
-  const handleFileInput = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFile(e.target.files[0]);
-    }
-  };
 
-const handleFile = (file) => {
-  const fileType = file.type;
 
-  if (
-    fileType !== "application/pdf" &&
-    fileType !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
-    alert("Please upload a PDF or DOCX file");
-    return;
+export default function ResumeUploadSection({
+  uploadedFile,
+  setUploadedFile,
+  isDragOver,
+  setIsDragOver,
+  uploadProgress,
+  setUploadProgress,
+  isUploading,
+  setIsUploading,
+  fileInputRef,
+  itemVariants,
+}) {
+  const handleFileUpload = (file) => {
+    setUploadedFile(file)
+    uploadFile(file)
+    setIsUploading(true)
+    setUploadProgress(0)
+
+    // Simulate upload progress
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setIsUploading(false)
+          return 100
+        }
+        return prev + 10
+      })
+    }, 200)
   }
 
-  setFile(file);
-  uploadFile(file)
-
-  
-  
-};
-
-const uploadFile = async (selectedFile) => {
-    setIsLoading(true);
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    const files = Array.from(e.dataTransfer.files)
+    if (files.length > 0 && files[0].type === "application/pdf") {
+      handleFileUpload(files[0])
+    }
+  }
+  const uploadFile = async (selectedFile) => {
+    setIsUploading(true);
     const formData = new FormData();
     formData.set("resume", selectedFile);
 
@@ -79,95 +73,132 @@ const uploadFile = async (selectedFile) => {
     }
   };
 
- 
+  const handleFileSelect = (e) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      handleFileUpload(files[0])
+    }
+  }
+
+  const removeFile = () => {
+    setUploadedFile(null)
+    setUploadProgress(0)
+    setIsUploading(false)
+  }
 
   return (
-    <section className="w-full py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-2">Upload Your Resume</h2>
-          <p className="text-center mb-6">
-            We'll match you with jobs that fit your skills and experience
-          </p>
-          
-          <div 
-            className={cn(
-              "border-2 border-dashed rounded-lg p-8 transition-all duration-200 text-center",
-              isDragging ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/50",
-              isLoading ? "opacity-75 pointer-events-none" : ""
-            )}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            {!file && !isLoading && (
-              <>
-                <Upload className="h-10 w-10 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">
-                  Drag & drop your resume here, or
-                </p>
-                <div>
-                  <input
-                    type="file"
-                    id="resume-upload"
-                    className="hidden"
-                    accept=".pdf,.docx"
-                    onChange={handleFileInput}
-                  />
-                  <Button
-                    onClick={() => document.getElementById("resume-upload")?.click()}
-                    variant="outline"
-                    className="mx-auto"
+    <motion.div className="mb-16" variants={itemVariants}>
+      <div className="max-w-2xl mx-auto">
+        <motion.div
+          className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 backdrop-blur-sm ${
+            isDragOver ? "border-blue-400" : uploadedFile ? "border-emerald-400" : "border-slate-300"
+          }`}
+          style={{
+            background: isDragOver
+              ? "linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)"
+              : uploadedFile
+                ? "linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)"
+                : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%)",
+          }}
+          onDrop={handleDrop}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setIsDragOver(true)
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          <input ref={fileInputRef} type="file" accept=".pdf" onChange={handleFileSelect} className="hidden" />
+
+          {!uploadedFile ? (
+            <div className="text-center">
+              <motion.div
+                animate={{
+                  y: [-5, 5, -5],
+                  rotate: [0, 5, -5, 0],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              >
+                <Upload className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+              </motion.div>
+              <h3 className="text-xl font-semibold text-slate-700 mb-2">Upload Your Resume</h3>
+              <p className="text-slate-500 mb-6">Drag and drop your PDF resume here, or click to browse</p>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  variant="outline"
+                  size="lg"
+                  className="h-12 px-6 rounded-xl border-2 hover:border-blue-400 hover:bg-blue-50 bg-white/80 backdrop-blur-sm"
+                >
+                  <FileText className="w-5 h-5 mr-2" />
+                  Choose File
+                </Button>
+              </motion.div>
+            </div>
+          ) : (
+            <div className="text-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+              >
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.3) 100%)",
+                    }}
                   >
-                    <FileText className="h-4 w-4 mr-2" />
-                    Browse Files
-                  </Button>
+                    {isUploading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                      >
+                        <Upload className="w-6 h-6 text-emerald-600" />
+                      </motion.div>
+                    ) : (
+                      <Check className="w-6 h-6 text-emerald-600" />
+                    )}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-slate-700">{uploadedFile.name}</p>
+                    <p className="text-sm text-slate-500">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
+                  <motion.button
+                    onClick={removeFile}
+                    className="ml-auto p-2 hover:bg-red-100 rounded-full transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <X className="w-5 h-5 text-red-500" />
+                  </motion.button>
                 </div>
-                <p className="text-xs mt-4">
-                  Supported formats: PDF, DOCX (Max 5MB)
-                </p>
-              </>
-            )}
-            
-            {isLoading && (
-              <div className="py-6">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-                <p className="text-gray-600">Analyzing your resume...</p>
-              </div>
-            )}
-            
-            {file && !isLoading && (
-              <div className="py-4">
-                <FileText className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                <p className="font-medium mb-1">{file.name}</p>
-                <p className="text-sm text-gray-500 mb-4">
-                  {(file.size / (1024 * 1024)).toFixed(2)} MB
-                </p>
-                
-                {predictedRole && (
-                  <div className=" text-green-800 p-3 rounded-md mb-4">
-                    <p className="font-medium">Predicted Role: {predictedRole}</p>
-                    <p className="text-sm">We found {Math.floor(Math.random() * 50) + 10} matching jobs</p>
+
+                {isUploading && (
+                  <div className="w-full bg-slate-200 rounded-full h-2 mb-4">
+                    <motion.div
+                      className="h-2 rounded-full"
+                      style={{
+                        background: "linear-gradient(90deg, rgba(14, 165, 233, 1) 0%, rgba(34, 197, 94, 1) 100%)",
+                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${uploadProgress}%` }}
+                      transition={{ duration: 0.3 }}
+                    />
                   </div>
                 )}
-                
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => {
-                    setFile(null);
-                    setPredictedRole(null);
-                  }}
-                >
-                  Upload a different resume
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
 
-export default ResumeUpload;
+                {!isUploading && <p className="text-emerald-600 font-medium">✓ Resume uploaded successfully!</p>}
+              </motion.div>
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </motion.div>
+  )
+}

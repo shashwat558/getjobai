@@ -6,6 +6,7 @@ import HeroContent from "./heroContent"
 import SearchSection from "./searchSection"
 import ResumeUploadSection from "./ResumeUpload"
 import JobRecommendationsSection from "./job-reccomendation"
+import Feedback from "./Feedback";
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -231,9 +232,12 @@ export default function HeroSection() {
           setPredictedRole={setPredictedRole}
           predictedRole={predictedRole}
         />
+        
 
         {/* Job Recommendations Section */}
         <JobRecommendationsSection uploadedFile={uploadedFile} itemVariants={itemVariants} />
+
+        <Feedback isUploaded={uploadedFile}/>
       </div>
     </motion.section>
   )

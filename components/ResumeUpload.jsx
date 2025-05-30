@@ -5,7 +5,7 @@
 import { Button } from "@/components/ui/button"
 import { Upload, FileText, X, Check } from "lucide-react"
 import { motion } from "framer-motion"
-import { useJobs } from "@/store/useJobs"
+import { useFeedBack, useJobs, useLoading } from "@/store/useJobs"
 
 
 
@@ -25,6 +25,8 @@ export default function ResumeUploadSection({
   predictedRole
 }) {
   const {setJobs} = useJobs()
+  const {setFeedback} = useFeedBack()
+  const {setLoading} = useLoading()
   const handleFileUpload = (file) => {
     setUploadedFile(file)
     uploadFile(file)
@@ -53,6 +55,7 @@ export default function ResumeUploadSection({
     }
   }
   const uploadFile = async (selectedFile) => {
+  setLoading(true)
   setIsUploading(true);
   const formData = new FormData();
   formData.set("resume", selectedFile);
@@ -72,16 +75,19 @@ export default function ResumeUploadSection({
     try {
       setPredictedRole(result.role);
       setJobs(result.jobs);
-      console.log("Success: ", result);
+      setFeedback({score:result.resumeScore, tips: result.tips});
+      
     } catch (innerError) {
       console.error("Error inside result handling:", innerError);
       alert("Failed to handle response data: " + innerError.message);
     }
   } catch (error) {
     console.error("Upload error:", error);
+    setLoading(false)
     alert("Failed to analyze resume: " + error.message);
   } finally {
     setIsUploading(false);
+    setLoading(false)
   }
 };
 

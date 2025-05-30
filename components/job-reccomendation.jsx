@@ -1,14 +1,23 @@
 
 
-import { useJobs } from "@/store/useJobs"
+import { useJobs, useLoading } from "@/store/useJobs"
 import JobCard from "./job-card"
 import {motion} from "framer-motion";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import FancyLoading from './Loading'
 export default function JobRecommendationsSection({ uploadedFile, itemVariants }) {
   const { jobs } = useJobs()
+  const {loading} = useLoading();
+
+
 
   if (!uploadedFile || !jobs || jobs.length === 0) return null
+
+  if(loading){
+    return <FancyLoading />
+  }
+  
 
   return (
     <motion.div className="mb-16" variants={itemVariants}>

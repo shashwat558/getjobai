@@ -5,6 +5,41 @@ import { createClient } from "@supabase/supabase-js";
 
 const genAi = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
+const getResumeFeedback = async (text) => {
+    const Prompt = `
+You are a professional resume reviewer. Analyze the following resume text and return a JSON response containing:
+1. A resume score between 0 to 100 based on clarity, formatting, relevant experience, and impact.
+2. Three actionable tips to improve the resume.
+
+Respond in the following JSON format:
+\`\`\`json
+{
+  "score": 85,
+  "tips": [
+    "Use more action verbs to describe accomplishments.",
+    "Quantify your impact with metrics like revenue or growth.",
+    "Tailor the resume to specific job roles."
+  ]
+}
+\`\`\`
+
+text:
+${text}
+`;
+
+    const response = await genAi.models.generateContent({
+        model: "gemini-1.5-flash",
+        contents: Prompt
+    });
+
+    const result = response.text;
+    const match = result?.match(/```json\s*([\s\S]*?)```/);
+    const jsonString = match ? match[1].trim() : result?.trim();
+    const sanitizedJsonString = jsonString?.replace(/[\x00-\x1F\x7F]/g, '');
+    const feedback = JSON.parse(sanitizedJsonString ?? "{}");
+
+    return feedback;
+};
 
 
 const getJobRoles = async (text) => {
@@ -60,6 +95,8 @@ export async function POST(req){
 
     const {embedding, role} = await getJobRoles(mainContent);
     console.log(embedding, role)
+    const feedback = await getResumeFeedback(mainContent);
+    console.log(feedback)
 
     const {data, error} = await supabase.rpc('match_jobs', {
         query_embedding: embedding,
@@ -70,7 +107,8 @@ export async function POST(req){
         console.log(error)
     }
 
-    return NextResponse.json({jobs: data, roles:role })
+    return NextResponse.json({jobs: data, roles:role,resumeScore: feedback.score,
+    tips: feedback.tips })
 
 
 

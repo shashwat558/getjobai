@@ -4,6 +4,7 @@ import Navbar from "@/components/NavBar";
 
 
 
+
 const font = Poppins({
   subsets: ["latin"],
   weight: "400"
@@ -22,6 +23,7 @@ export default function RootLayout({ children }) {
       >
          
         <Navbar />
+        
         {children}
         
       </body>

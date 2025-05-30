@@ -9,7 +9,7 @@ const genAi = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
 const getJobRoles = async (text) => {
     const Prompt = `
-You will be given a text content of a resume and your job is to return the job role that best fits the user.
+You will be given a text content of a resume and your job is to return the job role that best fits the user and only give one role.
 
 Respond in the following JSON format:
 {
@@ -59,7 +59,7 @@ export async function POST(req){
     console.log(mainContent);
 
     const queryEmbedding = await getJobRoles(mainContent);
-    console.log(aiResponse)
+    console.log(queryEmbedding)
 
     const {data, error} = await supabase.rpc('match_jobs', {
         query_embedding: queryEmbedding,

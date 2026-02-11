@@ -29,8 +29,9 @@ export async function POST(req, res) {
         const embeddings = await Promise.all(
           titles.map(async (title) => {
             const res = await genAI.models.embedContent({
-              model: "text-embedding-004",
+              model: "gemini-embedding-001",
               contents: title,
+              config: {outputDimensionality:768}
             });
             return res.embeddings;
           })

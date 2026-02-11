@@ -56,9 +56,6 @@ export default function JobCard({ job, index }) {
       style={{
         background: "linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%)",
       }}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
       whileHover={{
         scale: 1.02,
         boxShadow: "0 25px 50px rgba(14, 165, 233, 0.15)",
@@ -131,13 +128,9 @@ export default function JobCard({ job, index }) {
             size="lg"
           >
             Apply on {job.source}
-            <motion.div
-              className="ml-2"
-              animate={{ x: [0, 4, 0] }}
-              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-            >
+            <span className="ml-2">
               <ArrowRight className="w-4 h-4" />
-            </motion.div>
+            </span>
           </Button>
         </Link>
       </motion.div>

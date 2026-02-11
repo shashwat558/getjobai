@@ -28,7 +28,7 @@ ${text}
 `;
 
     const response = await genAi.models.generateContent({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.5-flash",
         contents: Prompt
     });
 
@@ -56,7 +56,7 @@ ${text}
 
 `
     const response = await genAi.models.generateContent({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.5-flash",
         contents: Prompt
     })
     const result = response.text;
@@ -67,8 +67,9 @@ ${text}
     console.log(mainString)
     
     const embeddings = await genAi.models.embedContent({
-        model: "text-embedding-004",
-        contents: mainString.jobRoles
+        model: "gemini-embedding-001",
+        contents: mainString.jobRoles,
+        config: {outputDimensionality: 768}
     })
     const queryEmbedding = embeddings.embeddings[0].values;
     

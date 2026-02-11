@@ -1,10 +1,11 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import Image from "next/image"
 
 
 export default function HeroContent({ itemVariants, floatingVariants }) {
+  const reduceMotion = useReducedMotion()
   return (
     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center py-12 lg:py-20">
       
@@ -25,8 +26,8 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
           >
             <motion.span
               className="text-sm font-medium bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+              animate={reduceMotion ? undefined : { opacity: [0.7, 1, 0.7] }}
+              transition={reduceMotion ? undefined : { duration: 2, repeat: Number.POSITIVE_INFINITY }}
             >
               ✨ Powered by Advanced AI
             </motion.span>
@@ -39,14 +40,22 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
           >
             <motion.span
               className="bg-gradient-to-r from-slate-800 via-blue-700 to-cyan-700 bg-clip-text text-transparent"
-              animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
-              }}
+              animate={
+                reduceMotion
+                  ? undefined
+                  : {
+                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                    }
+              }
+              transition={
+                reduceMotion
+                  ? undefined
+                  : {
+                      duration: 5,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "linear",
+                    }
+              }
               style={{
                 backgroundSize: "200% 200%",
               }}
@@ -134,14 +143,8 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <motion.div
-              animate={{
-                y: [-10, 10, -10],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
+              animate={reduceMotion ? undefined : { y: [-8, 8, -8] }}
+              transition={reduceMotion ? undefined : { duration: 3.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
             >
               <Image
                 src="/hero.png"
@@ -163,14 +166,22 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
               key={index}
               className={`absolute ${card.position} bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-white/50`}
               variants={floatingVariants}
-              animate={{
-                y: [-10, 10, -10],
-                rotate: card.rotation,
-              }}
-              transition={{
-                y: { duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: index * 0.5 },
-                rotate: { duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-              }}
+              animate={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: [-8, 8, -8],
+                      rotate: card.rotation,
+                    }
+              }
+              transition={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: { duration: 3.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: index * 0.5 },
+                      rotate: { duration: 5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
+                    }
+              }
               whileHover={{
                 rotate: 0,
                 scale: 1.1,
@@ -180,8 +191,8 @@ export default function HeroContent({ itemVariants, floatingVariants }) {
               <div className="flex items-center gap-2">
                 <motion.div
                   className={`w-8 h-8 bg-gradient-to-br ${card.gradient} rounded-lg shadow-lg`}
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 8 - index * 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                  animate={reduceMotion ? undefined : { rotate: [0, 360] }}
+                  transition={reduceMotion ? undefined : { duration: 8 - index * 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                 />
                 <div>
                   <div className="w-16 h-2 bg-slate-200 rounded"></div>

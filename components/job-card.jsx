@@ -5,50 +5,54 @@ import { MapPin, Building, ArrowRight, ExternalLink } from "lucide-react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 
- 
-export default function JobCard({ job, index }) {
-  
-  const matchPercentage = Math.round(job.similarity * 100)
+const getMatchColor = (match) => {
+  if (match >= 90) return "rgba(34, 197, 94, 1) 0%, rgba(16, 185, 129, 1) 100%"
+  if (match >= 80) return "rgba(14, 165, 233, 1) 0%, rgba(6, 182, 212, 1) 100%"
+  if (match >= 70) return "rgba(251, 146, 60, 1) 0%, rgba(245, 101, 101, 1) 100%"
+  return "rgba(156, 163, 175, 1) 0%, rgba(107, 114, 128, 1) 100%"
+}
 
-  
-  const extractedSkills =
-    job.job_description
+const getCompanyLogoGradient = (companyName = "") => {
+  const gradients = [
+    "from-blue-500 to-cyan-500",
+    "from-emerald-500 to-teal-500",
+    "from-cyan-500 to-blue-500",
+    "from-teal-500 to-emerald-500",
+    "from-blue-600 to-indigo-600",
+    "from-green-500 to-emerald-500",
+  ]
+
+  const hash = companyName.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return gradients[hash % gradients.length]
+}
+
+const getSkills = (jobDescription = "", skills = []) => {
+  if (Array.isArray(skills) && skills.length > 0) {
+    return skills
+  }
+
+  return (
+    jobDescription
       .match(/Skills: ([^]+?)(?:Show more|$)/i)?.[1]
-      .split(",")
-      .map((skill) => skill.trim()) || []
-  const skills = job.skills || extractedSkills
+      ?.split(",")
+      .map((skill) => skill.trim()) ?? []
+  )
+}
 
-  
-  const truncatedDescription =
-    job.job_description
-      .replace(/Skills: [^]+?(?:Show more|$)/i, "")
-      .replace(/Show less/i, "")
-      .trim()
-      .substring(0, 150) + (job.job_description.length > 150 ? "..." : "")
+const getTruncatedDescription = (jobDescription = "") => {
+  const cleanedDescription = jobDescription
+    .replace(/Skills: [^]+?(?:Show more|$)/i, "")
+    .replace(/Show less/i, "")
+    .trim()
 
-  
-  const getMatchColor = (match) => {
-    if (match >= 90) return "rgba(34, 197, 94, 1) 0%, rgba(16, 185, 129, 1) 100%"
-    if (match >= 80) return "rgba(14, 165, 233, 1) 0%, rgba(6, 182, 212, 1) 100%"
-    if (match >= 70) return "rgba(251, 146, 60, 1) 0%, rgba(245, 101, 101, 1) 100%"
-    return "rgba(156, 163, 175, 1) 0%, rgba(107, 114, 128, 1) 100%"
-  }
+  return cleanedDescription.substring(0, 150) + (cleanedDescription.length > 150 ? "..." : "")
+}
 
-  
-  const getCompanyLogoGradient = (companyName) => {
-    const gradients = [
-      "from-blue-500 to-cyan-500",
-      "from-emerald-500 to-teal-500",
-      "from-cyan-500 to-blue-500",
-      "from-teal-500 to-emerald-500",
-      "from-blue-600 to-indigo-600",
-      "from-green-500 to-emerald-500",
-    ]
-
-    
-    const hash = companyName.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    return gradients[hash % gradients.length]
-  }
+export default function JobCard({ job, index }) {
+  const similarity = typeof job.similarity === "number" ? job.similarity : 0
+  const matchPercentage = Math.round(similarity * 100)
+  const skills = getSkills(job.job_description, job.skills)
+  const truncatedDescription = getTruncatedDescription(job.job_description)
 
   return (
     <motion.div

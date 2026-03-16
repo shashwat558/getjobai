@@ -20,7 +20,6 @@ const PopularSearches = () => {
   ]);
 
   const handleRoleClick = (role) => {
-    console.log(`Searching for: ${role}`);
     // In a real app, this would trigger a search
   };
 

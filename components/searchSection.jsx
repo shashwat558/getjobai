@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import JobResultsList from "./jobResultList";
 
-
 export default function SearchSection({ searchQuery, setSearchQuery, itemVariants }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -15,23 +14,31 @@ export default function SearchSection({ searchQuery, setSearchQuery, itemVariant
 
   useEffect(() => {
     const fetchJobs = async () => {
-      if (searchQuery.length < 2) {
-        setJobs(null);
+      const normalizedQuery = searchQuery.trim();
+
+      if (normalizedQuery.length < 2) {
+        setJobs([]);
         setShowResults(false);
         return;
       }
-      
+
       setLoading(true);
-      
+
       try {
-        const response = await fetch(`/api/getJobs?query=${searchQuery}`);
+        const response = await fetch(`/api/getJobs?query=${encodeURIComponent(normalizedQuery)}`);
+
         if (response.ok) {
           const result = await response.json();
           setJobs(result.jobs || []);
           setShowResults(true);
+        } else {
+          setJobs([]);
+          setShowResults(true);
         }
       } catch (error) {
         console.error("Error fetching jobs:", error);
+        setJobs([]);
+        setShowResults(true);
       } finally {
         setLoading(false);
       }
@@ -41,7 +48,6 @@ export default function SearchSection({ searchQuery, setSearchQuery, itemVariant
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
- 
   useEffect(() => {
     function handleClickOutside(event) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {

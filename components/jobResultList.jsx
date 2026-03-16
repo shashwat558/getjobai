@@ -2,9 +2,6 @@
 import { ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 
-
-
-
 export default function JobResultsList({ jobs, isVisible }) {
   if (!jobs || !isVisible) return null;
 
@@ -27,8 +24,8 @@ export default function JobResultsList({ jobs, isVisible }) {
             <div className="p-4 text-center text-slate-500">No jobs found matching your search</div>
           ) : (
             <div className="space-y-2">
-              {jobs.map((job, index) => (
-                <JobCard key={index} job={job} />
+              {jobs.map((job) => (
+                <JobCard key={job.apply_link} job={job} />
               ))}
             </div>
           )}

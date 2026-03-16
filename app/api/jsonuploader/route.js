@@ -1,58 +1,56 @@
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
-import fs from 'fs/promises';
+import fs from "fs/promises";
+import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenAI(
-  process.env.GEMINI_API_KEY
-);
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_SECRET_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_SECRET_KEY,
 );
 
-export async function POST(req, res) {
-  
-
+export async function POST() {
   try {
     const fileBuffer = await fs.readFile("public/jobs.jsonl", "utf-8");
     const lines = fileBuffer.trim().split("\n");
-    const BATCH_SIZE = 500;
+    const batchSize = 500;
     let batch = [];
 
     for (let i = 0; i < lines.length; i++) {
       const job = JSON.parse(lines[i]);
       batch.push(job);
 
-      if (batch.length === BATCH_SIZE || i === lines.length - 1) {
-        const titles = batch.map(j => j.job_title ?? "");
+      if (batch.length === batchSize || i === lines.length - 1) {
+        const text = batch.map((item) => `Job_title: ${item.title}, Job_description: ${item.description}` ?? "");
         const embeddings = await Promise.all(
-          titles.map(async (title) => {
-            const res = await genAI.models.embedContent({
+          text.map(async (text) => {
+            const response = await genAI.models.embedContent({
               model: "gemini-embedding-001",
-              contents: title,
-              config: {outputDimensionality:768}
+              contents: text,
+              config: { outputDimensionality: 768 },
             });
-            return res.embeddings;
-          })
+            return response.embeddings[0].values;
+          }),
         );
 
-        const jobsWithEmbeddings = batch.map((job, idx) => ({
-          ...job,
-          title_embedding: embeddings[idx],
+        const jobsWithEmbeddings = batch.map((item, index) => ({
+          ...item,
+          job_embedding: embeddings[index],
         }));
 
-        const { error } = await supabase.from("jobs").insert(jobsWithEmbeddings);
-        if (error) console.error("Insert error:", error);
+        const { error } = await supabase.from("better_jobs").insert(jobsWithEmbeddings);
+        if (error) {
+          console.error("Insert error:", error);
+        }
 
-        batch = []; // reset for next batch
+        batch = [];
       }
     }
 
-    return res.status(200).json({ message: "Upload complete" });
-
+    return NextResponse.json({ message: "Upload complete" });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("JSON uploader route failed:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

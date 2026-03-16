@@ -1,14 +1,10 @@
 
-
 "use client"
 
 import { Button } from "@/components/ui/button"
 import { Upload, FileText, X, Check } from "lucide-react"
 import { motion } from "framer-motion"
 import { useFeedBack, useJobs, useLoading } from "@/store/useJobs"
-
-
-
 
 export default function ResumeUploadSection({
   uploadedFile,
@@ -24,16 +20,11 @@ export default function ResumeUploadSection({
   itemVariants,
   predictedRole
 }) {
-  const {setJobs} = useJobs()
-  const {setFeedback} = useFeedBack()
-  const {setLoading} = useLoading()
-  const handleFileUpload = (file) => {
-    setUploadedFile(file)
-    uploadFile(file)
-    setIsUploading(true)
-    setUploadProgress(0)
+  const { setJobs } = useJobs()
+  const { setFeedback } = useFeedBack()
+  const { setLoading } = useLoading()
 
-    
+  const startUploadProgress = () => {
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 100) {
@@ -46,6 +37,14 @@ export default function ResumeUploadSection({
     }, 200)
   }
 
+  const handleFileUpload = (file) => {
+    setUploadedFile(file)
+    setIsUploading(true)
+    setUploadProgress(0)
+    startUploadProgress()
+    uploadFile(file)
+  }
+
   const handleDrop = (e) => {
     e.preventDefault()
     setIsDragOver(false)
@@ -54,43 +53,36 @@ export default function ResumeUploadSection({
       handleFileUpload(files[0])
     }
   }
+
   const uploadFile = async (selectedFile) => {
-  setLoading(true)
-  setIsUploading(true);
-  const formData = new FormData();
-  formData.set("resume", selectedFile);
-
-  try {
-    const response = await fetch("/api/analyzer", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(await response.text());
-    }
-
-    const result = await response.json();
-
     try {
-      setPredictedRole(result.role);
-      setJobs(result.jobs);
-      setFeedback({score:result.resumeScore, tips: result.tips});
-      
-    } catch (innerError) {
-      console.error("Error inside result handling:", innerError);
-      alert("Failed to handle response data: " + innerError.message);
-    }
-  } catch (error) {
-    console.error("Upload error:", error);
-    setLoading(false)
-    alert("Failed to analyze resume: " + error.message);
-  } finally {
-    setIsUploading(false);
-    setLoading(false)
-  }
-};
+      setLoading(true)
+      setIsUploading(true)
 
+      const formData = new FormData()
+      formData.set("resume", selectedFile)
+
+      const response = await fetch("/api/analyzer", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error(await response.text())
+      }
+
+      const result = await response.json()
+      setPredictedRole(result.roles ?? result.role)
+      setJobs(result.jobs ?? [])
+      setFeedback({ score: result.resumeScore, tips: result.tips })
+    } catch (error) {
+      console.error("Upload error:", error)
+      alert("Failed to analyze resume: " + error.message)
+    } finally {
+      setIsUploading(false)
+      setLoading(false)
+    }
+  }
 
   const handleFileSelect = (e) => {
     const files = e.target.files
@@ -229,8 +221,7 @@ export default function ResumeUploadSection({
       )}
     </motion.div>
   </div>
-)
-}
+          )}
         </motion.div>
       </div>
     </motion.div>

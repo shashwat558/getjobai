@@ -1,28 +1,24 @@
 
-
 import { useJobs, useLoading } from "@/store/useJobs"
 import JobCard from "./job-card"
-import {motion} from "framer-motion";
-import { Button } from "./ui/button";
-import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion"
+import { Button } from "./ui/button"
+import { ArrowRight } from "lucide-react"
 import FancyLoading from './Loading'
+
 export default function JobRecommendationsSection({ uploadedFile, itemVariants }) {
   const { jobs } = useJobs()
-  const {loading} = useLoading();
-
-
+  const { loading } = useLoading()
 
   if (!uploadedFile || !jobs || jobs.length === 0) return null
 
-  if(loading){
+  if (loading) {
     return <FancyLoading />
   }
-  
 
   return (
     <motion.div className="mb-16" variants={itemVariants}>
       <div className="max-w-6xl mx-auto">
-        
         <motion.div className="text-center mb-10" variants={itemVariants}>
           <h2 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-blue-700 bg-clip-text text-transparent mb-4">
             Jobs Matched to Your Resume
@@ -32,7 +28,6 @@ export default function JobRecommendationsSection({ uploadedFile, itemVariants }
           </p>
         </motion.div>
 
-        
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobs.map((job, index) => (
             <JobCard key={job.id} job={job} index={index} />

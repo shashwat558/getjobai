@@ -6,7 +6,7 @@ import HeroContent from "./heroContent"
 import SearchSection from "./searchSection"
 import ResumeUploadSection from "./ResumeUpload"
 import JobRecommendationsSection from "./job-reccomendation"
-import Feedback from "./Feedback";
+import Feedback from "./Feedback"
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -15,7 +15,7 @@ export default function HeroSection() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef(null)
-  const [predictedRole, setPredictedRole] = useState("");
+  const [predictedRole, setPredictedRole] = useState("")
   const reduceMotion = useReducedMotion()
 
   const containerVariants = {
@@ -179,7 +179,7 @@ export default function HeroSection() {
         {/* Job Recommendations Section */}
         <JobRecommendationsSection uploadedFile={uploadedFile} itemVariants={itemVariants} />
 
-        <Feedback isUploaded={uploadedFile}/>
+        <Feedback isUploaded={uploadedFile} />
       </div>
     </motion.section>
   )
